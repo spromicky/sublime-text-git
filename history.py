@@ -39,7 +39,14 @@ class GitBlameCommand(GitTextCommand):
         return begin_line + 1, end_line + 1
 
     def blame_done(self, result, position=None):
-        self.scratch(result, title="Git Blame", position=position,
+        new_result = ''
+        for line in iter(result.splitlines()):
+            match = re.search('^(\\^?[a-f0-9]+)\\s+[\\w\\-\\d\\.\\/]*\\s*\\((.*?\\s+)(\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d) [+-]\\d{4}\\s+\\d+\\)(.*)$' ,line)
+            if match:
+                new_result = new_result + match.group(1) + ' ' + match.group(3) + ' ' + match.group(2) + match.group(4) + '\n'
+
+
+        self.scratch(new_result, title="Git Blame", position=position,
                 syntax=plugin_file("syntax/Git Blame.tmLanguage"))
 
 
